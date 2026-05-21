@@ -3,6 +3,14 @@
 
 ---
 
+## 🌐 LIVE WORKING MODEL
+
+Use the deployed project directly here:
+
+https://sairithvik01.github.io/Password-Analyzer/
+
+---
+
 ## 📁 PROJECT STRUCTURE
 
 ```

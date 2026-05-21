@@ -36,7 +36,7 @@ const UI_SELECTORS = {
     poolValue: '#poolValue',
     combinationsValue: '#combinationsValue',
     crackTimeValue: '#crackTimeValue',
-    dictionaryRisk: '#dictionaryRisk',
+    plagiarismRisk: '#plagiarismRisk',
     
     // Requirements
     requirementsPrefix: '#req-',
@@ -258,10 +258,10 @@ class UIManager {
         document.querySelector(UI_SELECTORS.crackTimeValue).textContent = 
             analysis.crackTime;
         
-        // Update dictionary risk
-        const dictionaryEl = document.querySelector(UI_SELECTORS.dictionaryRisk);
-        dictionaryEl.textContent = analysis.dictionaryRisk.label;
-        dictionaryEl.style.color = this.getRiskColor(analysis.dictionaryRisk.level);
+        // Update plagiarism risk
+        const plagiarismEl = document.querySelector(UI_SELECTORS.plagiarismRisk);
+        plagiarismEl.textContent = analysis.plagiarismRisk.label;
+        plagiarismEl.style.color = this.getRiskColor(analysis.plagiarismRisk.level);
         
         // Update requirements checklist
         this.updateRequirementsDisplay(analysis.requirements);
@@ -430,6 +430,8 @@ class UIManager {
         document.querySelector(UI_SELECTORS.poolValue).textContent = '0';
         document.querySelector(UI_SELECTORS.combinationsValue).textContent = '0';
         document.querySelector(UI_SELECTORS.crackTimeValue).textContent = 'Instant';
+        document.querySelector(UI_SELECTORS.plagiarismRisk).textContent = 'Low';
+        document.querySelector(UI_SELECTORS.plagiarismRisk).style.color = this.getRiskColor('low');
         
         // Reset requirements
         document.querySelectorAll('[id^="req-"]').forEach(el => {

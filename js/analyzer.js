@@ -47,6 +47,11 @@ const KEYBOARD_PATTERNS = [
     'abcdef', 'abcdefg', 'abcd', 'abc'
 ];
 
+const COMMON_PASSWORD_FRAGMENTS = COMMON_PASSWORDS
+    .map((entry) => entry.toLowerCase())
+    .filter((entry) => entry.length >= 4);
+const PLAGIARISM_PATTERN_THRESHOLD = 2;
+
 // ============================================================================
 // ENTROPY CALCULATION FUNCTIONS
 // ============================================================================
@@ -344,6 +349,53 @@ export function getDictionaryRisk(patterns, isCommon) {
     };
 }
 
+/**
+ * Get plagiarism risk level
+ * Flags copied/borrowed password traits such as common leaked passwords
+ * and passwords containing common-password fragments.
+ *
+ * @param {string} password - Password being assessed
+ * @param {Array} patterns - Detected patterns array
+ * @param {boolean} isCommon - Is password in common password dictionary
+ * @returns {object} Plagiarism risk assessment
+ */
+export function getPlagiarismRisk(password, patterns, isCommon) {
+    if (!password) {
+        return {
+            level: 'low',
+            label: 'Low',
+            description: 'No password to assess'
+        };
+    }
+
+    if (isCommon) {
+        return {
+            level: 'critical',
+            label: 'Critical',
+            description: 'Exact match with known breached/common password'
+        };
+    }
+
+    const lowerPassword = password.toLowerCase();
+    const hasCommonFragment = COMMON_PASSWORD_FRAGMENTS.some((fragment) =>
+        lowerPassword.includes(fragment)
+    );
+
+    if (hasCommonFragment || patterns.length >= PLAGIARISM_PATTERN_THRESHOLD) {
+        return {
+            level: 'moderate',
+            label: 'Moderate',
+            description: 'Looks partially copied from common password patterns'
+        };
+    }
+
+    return {
+        level: 'low',
+        label: 'Low',
+        description: 'No copied/common password signature detected'
+    };
+}
+
 // ============================================================================
 // UNIQUENESS SCORING
 // ============================================================================
@@ -611,9 +663,9 @@ export function analyzePassword(password) {
                 description: 'No password entered'
             },
             remediation: '',
-            dictionaryRisk: {
+            plagiarismRisk: {
                 level: 'low',
-                label: '✅ Low Risk',
+                label: 'Low',
                 description: 'No password to assess'
             }
         };
@@ -630,7 +682,7 @@ export function analyzePassword(password) {
     const requirements = validateRequirements(password);
     const strengthInfo = getStrengthInfo(score);
     const remediation = generateRemediationFeedback(password, entropy);
-    const dictionaryRisk = getDictionaryRisk(patterns, isCommon);
+    const plagiarismRisk = getPlagiarismRisk(password, patterns, isCommon);
 
     return {
         password,
@@ -645,6 +697,6 @@ export function analyzePassword(password) {
         requirements,
         strengthInfo,
         remediation,
-        dictionaryRisk
+        plagiarismRisk
     };
 }
