@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Enterprise-Grade Password Strength Analyzer with Real-time Security Assessment">
+    <title>Password Fortress | Enterprise Security Analysis Platform</title>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        
+        <!-- Header Navigation -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1 class="app-title">PASSWORD FORTRESS</h1>
+                    <p class="app-subtitle">Enterprise Security Analysis Platform</p>
+                </div>
+                <nav class="header-nav">
+                    <button id="cryptoBtn" class="nav-button">Security Concepts</button>
+                    <button id="aboutBtn" class="nav-button">About</button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            
+            <!-- Left Column: Dashboard -->
+            <div class="dashboard-column">
+                
+                <!-- User Profile / Session Info -->
+                <section class="profile-card card">
+                    <div class="card-header">
+                        <h2 class="section-title">User Session</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-info">
+                            <div class="profile-field">
+                                <span class="field-label">Username</span>
+                                <span class="field-value" id="profileUsername">intern_dev_2024</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="field-label">Last Assessment</span>
+                                <span class="field-value" id="profileLastCheck">Never</span>
+                            </div>
+                            <div class="profile-field">
+                                <span class="field-label">Previous Passwords</span>
+                                <span class="field-value" id="profileHistoryCount">0</span>
+                            </div>
+                        </div>
+                        <button id="clearHistoryBtn" class="button button-secondary button-small">
+                            Clear History
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Password Input Section -->
+                <section class="password-input-card card">
+                    <div class="card-header">
+                        <h2 class="section-title">Analyze Password</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <label for="passwordInput" class="input-label">Enter Password</label>
+                            <div class="input-wrapper">
+                                <input 
+                                    type="password" 
+                                    id="passwordInput" 
+                                    class="password-input"
+                                    placeholder="Type your password to begin analysis..."
+                                    autocomplete="off"
+                                    aria-label="Password input field"
+                                >
+                                <button id="toggleVisibilityBtn" class="input-toggle" type="button" title="Show password" aria-label="Show password" aria-pressed="false">
+                                    <span class="eye-icon" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div class="input-helpers">
+                                <button id="clearBtn" class="button button-secondary button-small">
+                                    Clear
+                                </button>
+                                <button id="generateBtn" class="button button-primary button-small">
+                                    Generate Strong Password
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Password History Warning -->
+                        <div id="historyWarning" class="alert alert-danger" style="display: none;">
+                            <strong>Action Blocked:</strong> This password matches a previously used password in your history database.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Strength Assessment -->
+                <section class="strength-card card">
+                    <div class="card-header">
+                        <h2 class="section-title">Strength Assessment</h2>
+                        <div class="strength-badge" id="strengthBadge">No Password</div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Score Display -->
+                        <div class="score-display">
+                            <div class="score-circle">
+                                <span class="score-number" id="scorePercentage">0</span>
+                                <span class="score-unit">%</span>
+                            </div>
+                            <div class="score-details">
+                                <p class="score-label">Overall Security Score</p>
+                                <p class="score-description" id="scoreDescription">Enter a password to begin analysis</p>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bars -->
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <div class="metric-label">Entropy</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="entropyProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="metric-value" id="entropyValue">0.00 bits</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Uniqueness</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="uniquenessProgress" style="width: 0%"></div>
+                                </div>
+                                <div class="metric-value" id="uniquenessValue">0/100</div>
+                            </div>
+                        </div>
+
+                        <!-- Security Metrics Table -->
+                        <div class="metrics-table">
+                            <div class="metric-row">
+                                <span class="metric-name">Character Pool</span>
+                                <span class="metric-value-inline" id="poolValue">0</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-name">Possible Combinations</span>
+                                <span class="metric-value-inline" id="combinationsValue">0</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-name">Time to Crack (100B/sec)</span>
+                                <span class="metric-value-inline" id="crackTimeValue">Instant</span>
+                            </div>
+                            <div class="metric-row">
+                                <span class="metric-name">Dictionary Risk</span>
+                                <span class="metric-value-inline" id="dictionaryRisk">Safe</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Requirements Checklist -->
+                <section class="requirements-card card">
+                    <div class="card-header">
+                        <h2 class="section-title">Strength Requirements</h2>
+                    </div>
+                    <div class="card-body">
+                        <ul class="requirements-list">
+                            <li class="requirement-item" id="req-length">
+                                <span class="check-icon">○</span>
+                                <span class="requirement-text">Minimum 12 characters</span>
+                            </li>
+                            <li class="requirement-item" id="req-upper">
+                                <span class="check-icon">○</span>
+                                <span class="requirement-text">Uppercase letters (A-Z)</span>
+                            </li>
+                            <li class="requirement-item" id="req-lower">
+                                <span class="check-icon">○</span>
+                                <span class="requirement-text">Lowercase letters (a-z)</span>
+                            </li>
+                            <li class="requirement-item" id="req-number">
+                                <span class="check-icon">○</span>
+                                <span class="requirement-text">Numbers (0-9)</span>
+                            </li>
+                            <li class="requirement-item" id="req-special">
+                                <span class="check-icon">○</span>
+                                <span class="requirement-text">Special characters (!@#$%^&*)</span>
+                            </li>
+                            <li class="requirement-item" id="req-unique">
+                                <span class="check-icon">○</span>
+                                <span class="requirement-text">No patterns or repetitions</span>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- Smart Remediation Feedback -->
+                <section id="remediationSection" class="remediation-card card" style="display: none;">
+                    <div class="card-header">
+                        <h2 class="section-title">Smart Remediation</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="remediationText" class="remediation-text"></div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- Right Sidebar: Password Alternatives & Pattern Analysis -->
+            <aside class="sidebar-column">
+                <!-- Pattern Detection -->
+                <section class="patterns-card card">
+                    <div class="card-header">
+                        <h2 class="section-title">Pattern Analysis</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="patternResults" class="pattern-results">
+                            <p class="empty-state">Enter a password to scan for patterns...</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Password Alternatives Section -->
+                <section class="alternatives-card card">
+                    <div class="card-header">
+                        <h2 class="section-title">Secure Alternatives</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="alternativesContainer" class="alternatives-container">
+                            <p class="empty-state">Generate alternatives to strengthen your password</p>
+                        </div>
+                    </div>
+                </section>
+
+            </aside>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p class="footer-text">
+                Secure Analysis • Client-Side Processing Only • No Data Stored
+            </p>
+            <p class="footer-subtext">
+                Built as an enterprise security assessment tool for internship evaluation
+            </p>
+        </footer>
+
+    </div>
+
+    <!-- Modal for About Section (Optional) -->
+    <div id="cryptoModal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="cryptoModalTitle">
+        <div class="modal-content modal-content-wide">
+            <button class="modal-close" type="button" data-modal-close aria-label="Close Cryptography Concepts">&times;</button>
+            <h2 id="cryptoModalTitle">Cryptography Concepts</h2>
+            <div class="concept-item">
+                <h3 class="concept-title">Shannon Entropy</h3>
+                <p class="concept-description">
+                    Measures the randomness and unpredictability of a password. Calculated as:
+                    <code>H = L x log2(C)</code> where L is length and C is character pool size.
+                    Higher entropy = more secure.
+                </p>
+            </div>
+
+            <div class="concept-item">
+                <h3 class="concept-title">Brute Force Math</h3>
+                <p class="concept-description">
+                    Time to crack = Total Combinations / (Guesses per Second x 2).
+                    At 100 billion guesses/second (modern GPU cluster), a 70-bit password
+                    would take approximately 36 years to crack on average.
+                </p>
+            </div>
+
+            <div class="concept-item">
+                <h3 class="concept-title">Salted Hashing</h3>
+                <p class="concept-description">
+                    Adding random "salt" to passwords before hashing prevents rainbow table attacks.
+                    Example: SHA256(password + random_salt) makes precomputed hash tables useless.
+                </p>
+            </div>
+
+            <div class="concept-item">
+                <h3 class="concept-title">Dictionary Attacks</h3>
+                <p class="concept-description">
+                    Attackers use lists of common passwords and words. Our analyzer checks
+                    against the 50 most common passwords. Real-world systems use much larger
+                    dictionaries of known breached passwords.
+                </p>
+            </div>
+
+            <div class="concept-item">
+                <h3 class="concept-title">Pattern Detection</h3>
+                <p class="concept-description">
+                    Sequential patterns (abc, 123) and repetitions (aaa, 1111) reduce entropy.
+                    Keyboard paths (asdf, qwerty) are especially weak because attackers test
+                    these patterns first in dictionary attacks.
+                </p>
+            </div>
+
+            <div class="concept-item">
+                <h3 class="concept-title">Password Reuse Risk</h3>
+                <p class="concept-description">
+                    If one service is breached, attackers try stolen credentials elsewhere.
+                    Systems should track previous passwords and prevent reuse to minimize
+                    lateral damage from compromised credentials.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="aboutModal" class="modal" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle">
+        <div class="modal-content">
+            <button class="modal-close" type="button" data-modal-close aria-label="Close About">&times;</button>
+            <h2 id="aboutModalTitle">About Password Fortress</h2>
+            <p>
+                Password Fortress is an enterprise-grade password strength analyzer demonstrating
+                advanced security concepts including Shannon entropy calculation, brute-force time
+                estimation, pattern detection, and secure random generation.
+            </p>
+            <p>
+                <strong>Technology Stack:</strong> Vanilla JavaScript (ES6+), HTML5, CSS3, Web Crypto API
+            </p>
+            <p>
+                <strong>Security Features:</strong> Dictionary attack detection, keyboard pattern analysis,
+                uniqueness scoring, password history tracking, and cryptographically secure generation.
+            </p>
+        </div>
+    </div>
+
+    <!-- JavaScript Modules (Load in dependency order) -->
+    <script type="module" src="js/main.js"></script>
+
+</body>
+</html>
